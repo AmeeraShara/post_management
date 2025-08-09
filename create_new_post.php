@@ -59,6 +59,7 @@ include 'header.php';
 }
 </style>
 
+<!-- Form -->
 <div class="form-container">
     <h2>Post Management - Create New Post</h2>
 
