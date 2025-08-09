@@ -21,30 +21,27 @@ table.table td.actions {
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="m-0">All Posts</h2>
-    <a href="create_new_post.php" class="btn btn-ash">
-        + Create New Post
-    </a>
+    <a href="create_new_post.php" class="btn btn-ash">+ Create New Post</a>
 </div>
 
-<!-- Table -->
 <?php
 $result = $conn->query("SELECT * FROM posts ORDER BY id ASC");
-if ($result->num_rows > 0) {
+if ($result && $result->num_rows > 0) {
     echo "<table class='table table-bordered'>";
-    echo "<tr><th>ID</th><th>Title</th><th>Content</th><th>Created At</th><th class='actions'>Actions</th></tr>";
+    echo "<thead><tr><th>ID</th><th>Title</th><th>Content</th><th>Created At</th><th class='actions'>Actions</th></tr></thead><tbody>";
     while ($row = $result->fetch_assoc()) {
         echo "<tr id='row{$row['id']}'>";
-        echo "<td>{$row['id']}</td>";
-        echo "<td>{$row['title']}</td>";
-        echo "<td>{$row['content']}</td>";
-        echo "<td>{$row['created_at']}</td>";
+        echo "<td>" . (int)$row['id'] . "</td>";
+        echo "<td>" . htmlspecialchars($row['title']) . "</td>";
+        echo "<td>" . htmlspecialchars($row['content']) . "</td>";
+        echo "<td>" . htmlspecialchars($row['created_at']) . "</td>";
         echo "<td class='actions'>
-                <a href='update_post.php?id={$row['id']}' class='btn btn-sm btn-ash'>Edit</a>
-                <button class='btn btn-sm btn-ash delete-btn' data-id='{$row['id']}'>Delete</button>
+                <a href='update_post.php?id=" . (int)$row['id'] . "' class='btn btn-sm btn-ash'>Edit</a>
+                <button class='btn btn-sm btn-ash delete-btn' data-id='" . (int)$row['id'] . "'>Delete</button>
               </td>";
         echo "</tr>";
     }
-    echo "</table>";
+    echo "</tbody></table>";
 } else {
     echo "<p>No posts found.</p>";
 }
@@ -55,10 +52,12 @@ if ($result->num_rows > 0) {
 $(document).on('click', '.delete-btn', function(){
     var id = $(this).data('id');
     $.post("delete_post.php", { id: id }, function(response){
-        if(response === "success"){
-            $("#row" + id).remove();
-        } 
-
+        if(response.trim() === "ignored"){ 
+            var actionCell = $("#row" + id).find("td.actions");
+            actionCell.html("<span style='color: red; font-weight: 600;'>Deleted</span>");
+        } else {
+            console.error("Failed to delete post.");
+        }
     });
 });
 </script>
