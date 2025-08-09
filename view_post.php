@@ -26,6 +26,7 @@ table.table td.actions {
     </a>
 </div>
 
+<!-- Table -->
 <?php
 $result = $conn->query("SELECT * FROM posts ORDER BY id ASC");
 if ($result->num_rows > 0) {
